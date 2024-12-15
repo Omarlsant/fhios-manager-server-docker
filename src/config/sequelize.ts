@@ -11,6 +11,13 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'mysql', // Asegúrate de especificar el dialecto aquí
+    logging: false, // Desactiva el registro de todas las consultas, puedes cambiarlo a console.log para depuración
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
   }
 );
 

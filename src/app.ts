@@ -1,6 +1,7 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import helmet from 'helmet';
 import userRoutes from './routes/UserRoute';
 import roleRoutes from './routes/RoleRoute';
 import userRoleRoutes from './routes/UserRoleRoute';
@@ -18,9 +19,10 @@ import sequelize from './config/sequelize';
 dotenv.config();
 
 const app: Application = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use('/api', userRoutes);
 app.use('/api', roleRoutes);
@@ -33,6 +35,12 @@ app.use('/api', documentRoutes);
 app.use('/api', knowledgeBaseRoutes);
 app.use('/api', notificationRoutes);
 app.use('/api', activityLogRoutes);
+
+// Manejo global de errores
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 sequelize.authenticate()
   .then(() => console.log('Database connected..Server is running'))
